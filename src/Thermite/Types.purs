@@ -16,7 +16,7 @@ type PerformAction props action m = props -> action -> m Unit
 
 type Render state props action = Context state props action -> state -> props -> Html action
 
-newtype Spec m state props action = Spec (SpecRecord m state props action)
+foreign import data Spec :: * -> * -> * -> * -> *
 
 type SpecRecord m state props action =
   { initialState       :: state
@@ -25,3 +25,4 @@ type SpecRecord m state props action =
   , componentWillMount :: Maybe action
   , displayName        :: Maybe String
   }
+
