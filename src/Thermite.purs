@@ -26,11 +26,29 @@ simpleSpec initialState performAction render = simpleSpecImpl
     , displayName: Nothing
     }
 
-componentWillMount :: forall m state props action. action -> Spec m state props action -> Spec m state props action
-componentWillMount action spec = componentWillMountImpl action spec
+foreign import componentWillMount """
+function componentWillMount(action) {
+  return function(spec) {
+    spec.componentWillMount = action;
+    return spec;
+  }
+}
+""" :: forall m state props action
+    .  action
+    -> Spec m state props action
+    -> Spec m state props action
 
-displayName :: forall m state props action. String -> Spec m state props action -> Spec m state props action
-displayName name spec = displayNameImpl name spec
+foreign import displayName """
+function displayName(displayName) {
+  return function(spec) {
+    spec.displayName = displayName;
+    return spec;
+  }
+}
+""" :: forall m state props action
+    .  String
+    -> Spec m state props action
+    -> Spec m state props action
 
 createClass :: forall eff state props action. Spec (Action eff state) state props action -> ComponentClass props eff
 createClass = createClassImpl runAction maybe
@@ -51,28 +69,3 @@ function simpleSpecImpl(specRecord) {
 """ :: forall m state props action
     .  SpecRecord m state props action
     -> Spec m state props action
-
-foreign import componentWillMountImpl """
-function componentWillMountImpl(action) {
-  return function(spec) {
-    spec.componentWillMount = action;
-    return spec;
-  }
-}
-""" :: forall m state props action
-    .  action
-    -> Spec m state props action
-    -> Spec m state props action
-
-foreign import displayNameImpl """
-function displayNameImpl(displayName) {
-  return function(spec) {
-    spec.displayName = displayName;
-    return spec;
-  }
-}
-""" :: forall m state props action
-    .  String
-    -> Spec m state props action
-    -> Spec m state props action
-
